@@ -3,23 +3,19 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Telegram\Project;
 use Illuminate\Support\ServiceProvider;
+use SergiX44\Nutgram\Nutgram;
 
-class AppServiceProvider extends ServiceProvider
+class TelegramServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        Nutgram::macro('getProject', fn(): Project => $this->get('project'));
     }
 }
