@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Telegram\Project;
 use App\Telegram\Support\TelegramFactory;
-use Illuminate\Console\Command;
 
-class SetWebhookCommand extends Command
+class SetWebhookCommand extends ProjectChoiceCommand
 {
     protected $signature = 'set:webhook {bot_id?}';
 
@@ -43,24 +41,5 @@ class SetWebhookCommand extends Command
 
         $this->info(sprintf('Webhook successfully set for %s url: %s', $project->name, $url));
         return 0;
-    }
-
-    private function getProject(): Project
-    {
-        $bot_id = $this->argument('bot_id');
-        $project = $bot_id === null ? null : Project::tryFrom($bot_id);
-
-        if ($project !== null) {
-            return $project;
-        }
-
-        $choices = Project::collect()
-            ->mapWithKeys(function (Project $project) {
-                return ["#" . $project->value . "" => $project->name];
-            })
-            ->toArray();
-        $bot_id = $this->choice('Choose project to set webhook', $choices);
-
-        return Project::from(substr($bot_id, 1));
     }
 }

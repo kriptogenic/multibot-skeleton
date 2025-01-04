@@ -2,16 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Telegram\Project;
 use App\Telegram\Support\TelegramFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
-use Illuminate\Console\Command;
 use stdClass;
 
-class RunPolling extends Command
+class RunPollingCommand extends ProjectChoiceCommand
 {
     /**
      * In seconds, can be float value
@@ -26,8 +24,7 @@ class RunPolling extends Command
 
     public function handle(Guzzle $http, TelegramFactory $factory): void
     {
-        $bot_id = $this->argument('bot_id');
-        $project = $bot_id === null ? Project::TestBot : Project::tryFrom($bot_id);
+        $project = $this->getProject();
 
         $polling_url = sprintf('%s/bot%s/getUpdates?offset=', 'https://api.telegram.org', $project->token());
         $webhook_url = 'http://localhost:8000' . route('telegram.webhook', $project->value, false);
